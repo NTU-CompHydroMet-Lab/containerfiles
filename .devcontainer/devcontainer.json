@@ -1,0 +1,18 @@
+{
+	"name": "Development Container",
+	// Use Podman Compose
+	"dockerComposeFile": "../compose.yml",
+	// The service to connect to
+	"service": "dev",
+	// The path to open when connecting (matches working_dir in compose.yml)
+	"workspaceFolder": "/workspace",
+	// Ensure the container keeps running
+	"overrideCommand": false,
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"terminal.integrated.defaultProfile.linux": "zsh"
+			}
+		}
+	}
+}

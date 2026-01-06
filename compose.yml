@@ -1,0 +1,26 @@
+services:
+  dev:
+    image: registry.lab.wangup.org/kilin/devel:0.2-cuda13.1
+    container_name: ${USER}-cont
+    hostname: ripper-pod
+    init: true
+    userns_mode: "keep-id"
+    group_add:
+      - keep-groups
+
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHRPOIC_API_KEY}
+
+    volumes:
+      - ${HOME}:${HOME}                   # User home
+      - .:/workspace                      # Project directory
+      - /home/NAS/data:/home/NAS/data:ro  # NAS data
+      - /home/NAS/homes:/home/NAS/homes   # NAS home
+      - ${HOME}/.cache/uv:/opt/uv-cache   # UV cache
+
+    working_dir: /workspace
+
+    command: ["sleep", "infinity"]
+    devices:
+      - nvidia.com/gpu=all
+

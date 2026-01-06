@@ -1,0 +1,33 @@
+FROM library/devel:latest
+
+RUN apt-get update && apt-get install -y --no-install-recommends zsh fzf fd-find ripgrep jq locales \
+    && locale-gen en_US.UTF-8
+
+ENV LANG=en_US.UTF-8
+ENV LC_ALL=en_US.UTF-8
+ENV LANGUAGE=en_US.UTF-8
+
+# Install Oh-My-Zsh and Powerlevel10k
+ENV ZSH="/usr/local/bin/ohmyzsh"
+RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" \
+    && git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH}/custom/themes/powerlevel10k 
+ENV SHELL=/usr/bin/zsh
+
+# Install Claude Code
+RUN curl -fsSL "https://claude.ai/install.sh" | bash \
+    && cp /root/.local/bin/claude /usr/local/bin/claude \
+    && chmod 755 /usr/local/bin/claude
+
+# Install Neovim
+ARG NVIM_VERSION=0.11.5
+RUN curl -fsSL "https://github.com/neovim/neovim/releases/download/v${NVIM_VERSION}/nvim-linux-x86_64.tar.gz" \
+    | tar -xz -C /opt \
+    && ln -s /opt/nvim-linux-x86_64/bin/nvim /usr/local/bin/nvim
+
+RUN sed -i '/^auth.*required.*pam_shells.so/a auth       sufficient pam_usertype.so isregular' /etc/pam.d/chsh
+
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+CMD ["/bin/zsh"]

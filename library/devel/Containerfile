@@ -1,0 +1,37 @@
+FROM nvcr.io/nvidia/cuda:13.1.0-devel-ubuntu24.04
+
+COPY --from=ghcr.io/astral-sh/uv:0.9.18 /uv /uvx /usr/local/bin/
+
+# Envs 
+ENV TERM=xterm-256color
+ENV SHELL=/bin/bash
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Asia/Taipei
+ENV VIRTUAL_ENV="/opt/venv"
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+ENV UV_PYTHON_INSTALL_DIR="/opt/uv-toolchain"
+ENV UV_TOOL_BIN_DIR="/opt/uv-tool"
+ENV UV_CACHE_DIR="/opt/uv-cache"
+ENV UV_PROJECT_ENVIRONMENT=$VIRTUAL_ENV
+ENV UV_LINK_MODE=copy
+ENV UV_COMPILE_BYTECODE=1
+
+# Development Tools 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git vim tmux wget curl htop sudo zip unzip build-essential openssh-client \
+    nvtop gosu \
+    && userdel -r ubuntu || true
+
+RUN echo 'ALL ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
+# Python Environment 
+RUN mkdir -p $UV_PYTHON_INSTALL_DIR $UV_TOOL_BIN_DIR $UV_CACHE_DIR $VIRTUAL_ENV /workspace \
+    && chown 1777 $UV_PYTHON_INSTALL_DIR $VIRTUAL_ENV $UV_CACHE_DIR $UV_TOOL_BIN_DIR
+
+RUN uv python install 3.13 \
+    && uv venv $VIRTUAL_ENV --python 3.13
+
+WORKDIR /workspace
+
+# Entrypoint 
+CMD ["/bin/bash"]
