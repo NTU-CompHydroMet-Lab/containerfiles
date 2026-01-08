@@ -46,7 +46,18 @@ cp .zshrc ~/
 
 4. Save the file
 
-## Step 5: Create Environment File (Optional)
+## Step 5: Copy Configuration Files to Your Project
+
+Copy the container configuration files to your desired project directory:
+
+```bash
+cd /path/to/your/desired/project
+cp /path/to/this/repository/compose.yml .
+mkdir -p .devcontainer
+cp /path/to/this/repository/.devcontainer/devcontainer.json .devcontainer/
+```
+
+## Step 6: Create Environment File (Optional)
 
 If you need to use Claude Code or set custom variables, create a `.env` file:
 
@@ -61,20 +72,39 @@ USER=${USER}
 
 4. Save the file
 
-## Step 6: Open the Container in VS Code
+## Step 7: Open the Container in VS Code
 
-1. Open the project folder in VS Code
-2. Press `F1` (or `Ctrl+Shift+P` on Windows/Linux, `Cmd+Shift+P` on Mac)
-3. Type: `Dev Containers: Reopen in Container`
-4. Press `Enter`
+### 7.1 Open Your Project in VS Code
 
-VS Code will:
-- Build the container (if needed)
-- Start the container
-- Reload VS Code connected to the container
-- Open `/workspace` as your working directory
+1. Open VS Code
+2. Click "File" → "Open Folder" (or press `Ctrl+K Ctrl+O`)
+3. Navigate to your project directory (where you copied the configuration files)
+4. Click "Open"
 
-This may take several minutes the first time while the container downloads and builds.
+### 7.2 Reopen in Container
+
+1. Press `F1` (or `Ctrl+Shift+P` on Windows/Linux, `Cmd+Shift+P` on Mac)
+2. Type: `Dev Containers: Reopen in Container`
+3. Press `Enter`
+
+### 7.3 Wait for Container to Build
+
+VS Code will now:
+1. Read your `compose.yml` and `.devcontainer/devcontainer.json` files
+2. Pull the container image (first time only - this may take 5-10 minutes)
+3. Build the container with your configuration
+4. Start the container
+5. Reload VS Code and connect to the container
+
+You'll see a notification in the bottom-right corner showing the progress.
+
+### 7.4 Verify You're Inside the Container
+
+Once VS Code reloads:
+1. Look at the bottom-left corner of VS Code
+2. You should see a green indicator showing "Dev Container: Development"
+3. Open a terminal (Terminal → New Terminal)
+4. You should see a zsh prompt inside the container
 
 You are now working inside the container!
 

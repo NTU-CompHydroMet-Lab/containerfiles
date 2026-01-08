@@ -1,7 +1,7 @@
 services:
   dev:
     image: registry.lab.wangup.org/kilin/devel:0.2-cuda13.1
-    container_name: ${USER}-cont
+    container_name: ${USER}-dev
     hostname: ripper-pod
     init: true
     userns_mode: "keep-id"
