@@ -8,8 +8,16 @@ services:
     group_add:
       - keep-groups
 
+
+    # Enable if you want to ssh into the container
+    # Remember to change external powrt 23456 to an unused port
+    # port:
+    #   - "23456:22"
+
     environment:
-      - ANTHROPIC_API_KEY=${ANTHRPOIC_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - TERM=xterm-kitty
 
     volumes:
       - ${HOME}:${HOME}                   # User home
@@ -17,10 +25,23 @@ services:
       - /home/NAS/data:/home/NAS/data:ro  # NAS data
       - /home/NAS/homes:/home/NAS/homes   # NAS home
       - ${HOME}/.cache/uv:/opt/uv-cache   # UV cache
+      - ${HOME}/.ssh/container-keys:/etc/ssh/host_keys # Presist host ssh fingerprints
 
     working_dir: /workspace
 
-    command: ["sleep", "infinity"]
+    # Command to generate host fingerprint if doesn't exist 
+    command: >
+      sh -c "
+        if [ ! -f /etc/ssh/host_keys/ssh_host_rsa_key ]; then
+          sudo ssh-keygen -A &&
+          sudo cp /etc/ssh/ssh_host_* /etc/ssh/host_keys/
+        else
+          sudo cp /etc/ssh/host_keys/ssh_host_* /etc/ssh/
+        fi &&
+        sudo /usr/sbin/sshd -D -e &&
+        sleep infinity
+      "
+
     devices:
       - nvidia.com/gpu=all
 

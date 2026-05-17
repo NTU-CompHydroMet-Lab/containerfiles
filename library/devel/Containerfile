@@ -19,8 +19,12 @@ ENV UV_COMPILE_BYTECODE=1
 # Development Tools 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git vim tmux wget curl htop sudo zip unzip build-essential openssh-client \
-    nvtop jq ripgrep fd-find bat fzf openssh-server net-tools stow \
+    nvtop jq ripgrep fd-find bat fzf openssh-server net-tools stow sssd-common \
+    libpam-sss libnss-sss \
     && userdel -r ubuntu || true
+
+COPY nsswitch.conf /etc/nsswitch.conf
+COPY sshd_ldap.conf /etc/ssh/sshd_config.d/sssd_ldap.conf
 
 RUN echo 'ALL ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 

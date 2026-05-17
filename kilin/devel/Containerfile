@@ -1,4 +1,4 @@
-FROM library/devel:0.6-cuda13.1.1
+FROM library/devel:0.7-cuda13.1.1
 
 RUN apt-get update && apt-get install -y --no-install-recommends zsh locales \
     clang libclang-dev libgraphite2-3 imagemagick ghostscript\
@@ -21,9 +21,17 @@ RUN curl -fsSL "https://claude.ai/install.sh" | bash \
     && cp /root/.local/bin/claude /usr/local/bin/claude \
     && chmod 755 /usr/local/bin/claude
 
+# Install Node.js 24
+RUN curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Codex
+RUN npm install -g @openai/codex \
+    && npm cache clean --force
+
 # Install Neovim
-ARG NVIM_VERSION=0.11.6
-RUN curl -fsSL "https://github.com/neovim/neovim/releases/download/v${NVIM_VERSION}/nvim-linux-x86_64.tar.gz" \
+RUN curl -fsSL "https://github.com/neovim/neovim/releases/download/stable/nvim-linux-x86_64.tar.gz" \
     | tar -xz -C /opt \
     && ln -s /opt/nvim-linux-x86_64/bin/nvim /usr/local/bin/nvim
 
@@ -47,7 +55,21 @@ RUN LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygi
     && tar xf lazygit.tar.gz lazygit\
     && install lazygit -D -t /usr/local/bin/
 
+# Allow LDAP users to change shell inside container regardless of /etc/shells
 RUN sed -i '/^auth.*required.*pam_shells.so/a auth       sufficient pam_usertype.so isregular' /etc/pam.d/chsh
+
+# Expose kilin/devel environment variables to login shells
+RUN { \
+    echo "export LANG=${LANG}"; \
+    echo "export LC_ALL=${LC_ALL}"; \
+    echo "export LANGUAGE=${LANGUAGE}"; \
+    echo "export EDITOR=${EDITOR}"; \
+    echo "export ZSH=${ZSH}"; \
+    echo "export SHELL=${SHELL}"; \
+    echo "export RUSTUP_HOME=${RUSTUP_HOME}"; \
+    echo "export CARGO_HOME=${CARGO_HOME}"; \
+    echo "export PATH=${CARGO_HOME}/bin:\$PATH"; \
+    } > /etc/profile.d/kilin-devel-env.sh
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
