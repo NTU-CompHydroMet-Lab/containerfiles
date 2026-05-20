@@ -23,7 +23,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpam-sss libnss-sss \
     && userdel -r ubuntu || true
 
-COPY nsswitch.conf /etc/nsswitch.conf
 COPY sshd_ldap.conf /etc/ssh/sshd_config.d/sssd_ldap.conf
 
 RUN echo 'ALL ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers

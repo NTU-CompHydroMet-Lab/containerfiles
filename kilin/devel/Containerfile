@@ -1,7 +1,7 @@
-FROM library/devel:0.7-cuda13.1.1
+FROM library/devel:0.8-cuda13.1.1
 
 RUN apt-get update && apt-get install -y --no-install-recommends zsh locales \
-    clang libclang-dev libgraphite2-3 imagemagick ghostscript\
+    clang libclang-dev libgraphite2-3 imagemagick ghostscript lsd\
     && locale-gen en_US.UTF-8 \
     && echo 'emulate sh -c ". /etc/profile"' >> /etc/zsh/zprofile # Source /etc/profile.d/container-env.sh for zsh login shells
 
@@ -57,6 +57,10 @@ RUN LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygi
 
 # Allow LDAP users to change shell inside container regardless of /etc/shells
 RUN sed -i '/^auth.*required.*pam_shells.so/a auth       sufficient pam_usertype.so isregular' /etc/pam.d/chsh
+
+RUN { \
+    echo "alias ls='lsd'"; \
+    } > /etc/profile.d/kilin-alias.sh
 
 # Expose kilin/devel environment variables to login shells
 RUN { \
