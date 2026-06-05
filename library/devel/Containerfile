@@ -31,7 +31,7 @@ RUN mkdir -p /var/run/sshd \
     && ssh-keygen -A
 
 # Python Environment 
-RUN mkdir -p $UV_PYTHON_INSTALL_DIR $UV_TOOL_BIN_DIR $UV_CACHE_DIR $VIRTUAL_ENV /workspace \
+RUN mkdir -p $UV_PYTHON_INSTALL_DIR $UV_TOOL_BIN_DIR $UV_CACHE_DIR $VIRTUAL_ENV \
     && uv python install 3.13 \
     && uv venv $VIRTUAL_ENV --python 3.13 \
     && chmod -R 777 /opt $UV_PYTHON_INSTALL_DIR $VIRTUAL_ENV $UV_CACHE_DIR $UV_TOOL_BIN_DIR
@@ -49,8 +49,6 @@ RUN { \
     echo 'export PATH="$VIRTUAL_ENV/bin:$PATH"'; \
     } > /etc/profile.d/container-env.sh \
     && chmod 644 /etc/profile.d/container-env.sh
-
-WORKDIR /workspace
 
 # Entrypoint
 CMD ["/bin/bash"]

@@ -14,7 +14,6 @@ if [[ ! -f "$HOME/.zshrc" ]]; then
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
-
 if [[ -z "$ZSH" ]]; then
     if [[ -d "/usr/local/bin/ohmyzsh" ]]; then
         export ZSH="/usr/local/bin/ohmyzsh"
@@ -22,13 +21,27 @@ if [[ -z "$ZSH" ]]; then
         export ZSH="$HOME/.oh-my-zsh"
     fi
 fi
-
-ZSH_THEME="powerlevel10k/powerlevel10k"
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-
-plugins=(git)
-source $ZSH/oh-my-zsh.sh
+if [[ -n "$ZSH" ]]; then
+    ZSH_THEME="powerlevel10k/powerlevel10k"
+    [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+    plugins=(git)
+    source $ZSH/oh-my-zsh.sh
+fi
 EOF
 fi
+
+# Generate SSH host keys if not exist, otherwise copy from host_keys to /etc/ssh
+if [[ ! -f /etc/ssh/host_keys/ssh_host_rsa_key ]]; then
+    sudo ssh-keygen -A
+    sudo cp /etc/ssh/ssh_host_* /etc/ssh/host_keys/
+else
+    sudo cp /etc/ssh/host_keys/ssh_host_* /etc/ssh/
+fi
+
+# sshd config test
+sudo /usr/sbin/sshd -t
+
+# sshd in background
+sudo /usr/sbin/sshd -e
 
 exec "$@"
