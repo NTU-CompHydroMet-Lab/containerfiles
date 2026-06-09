@@ -30,12 +30,15 @@ fi
 EOF
 fi
 
-# Generate SSH host keys if not exist, otherwise copy from host_keys to /etc/ssh
-if [[ ! -f /etc/ssh/host_keys/ssh_host_rsa_key ]]; then
-    sudo ssh-keygen -A
-    sudo cp /etc/ssh/ssh_host_* /etc/ssh/host_keys/
-else
-    sudo cp /etc/ssh/host_keys/ssh_host_* /etc/ssh/
+# Only manage persistent host keys when the host_keys volume is mounted
+if [[ -d /etc/ssh/host_keys ]]; then
+    # Generate SSH host keys if not exist, otherwise copy from host_keys to /etc/ssh
+    if [[ ! -f /etc/ssh/host_keys/ssh_host_rsa_key ]]; then
+        sudo ssh-keygen -A
+        sudo cp /etc/ssh/ssh_host_* /etc/ssh/host_keys/
+    else
+        sudo cp /etc/ssh/host_keys/ssh_host_* /etc/ssh/
+    fi
 fi
 
 # sshd config test

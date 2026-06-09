@@ -22,7 +22,9 @@ services:
 
     volumes:
       - ${HOME}:${HOME}                     # User home
-      - /home/NAS/:/home/NAS/               # NAS data
+      - /home/NAS/homes/:/home/NAS/homes    # NAS homes 
+      - /home/NAS/house/:/home/NAS/house    # NAS house 
+      - /home/NAS/data/:/home/NAS/data      # NAS data 
       - ${HOME}/.cache/uv:/opt/uv-cache     # UV cache
       - ${HOME}/.ssh/container-keys:/etc/ssh/host_keys #
       - /var/lib/sss/pipes:/var/lib/sss/pipes

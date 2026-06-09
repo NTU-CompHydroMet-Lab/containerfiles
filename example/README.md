@@ -4,7 +4,7 @@ Follow these steps to set up and open your development container in VS Code.
 
 ## Step 1: SSH into the Remote Machine
 
-SSH into your remote host machine. (For example up4090)
+SSH into your remote host machine. (For example up4090)  
 The remote machine already has Podman installed for running containers.
 
 ## Step 2: Copy Configuration Files to Your Project
@@ -16,8 +16,8 @@ Copy the `compose.yml` files to your project directory:
 1. SSH port (default 12345)
 2. Container name
 
-You should choose a free port as ssh port. You should also modify container name
-for your own idetification.
+You should choose a free port as ssh port. You should also modify container   
+name for your own idetification.
 
 ## Step 4: Start the container
 

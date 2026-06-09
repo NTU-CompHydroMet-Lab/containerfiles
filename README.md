@@ -30,5 +30,4 @@ See the [example](./example) directory for:
 ## Requirements
 
 - Remote machine with Podman installed
-- VS Code with Dev Containers extension
 - SSH access to the remote machine
