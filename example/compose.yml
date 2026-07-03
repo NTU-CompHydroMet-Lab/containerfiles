@@ -2,13 +2,13 @@ x-podman:
   in_pod: false
 services:
   dev:
-    image: registry.lab.wangup.org/kilin/devel:0.16-cuda13.1.1
-    container_name: bigdata 
+    image: registry.lab.wangup.org/kilin/devel:0.17-cuda13.1.1
+    container_name: ripper-pod 
     hostname: ripper-pod
     init: true
     userns_mode: "keep-id"
     working_dir: "${HOME}"
-    shm_sizes: '32gb'
+    shm_size: '32g'
     group_add:
       - keep-groups
     
